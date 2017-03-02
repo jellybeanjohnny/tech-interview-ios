@@ -32,7 +32,8 @@ import UIKit
 class ViewController: UIViewController {
     
     @IBOutlet weak var countdown: UILabel!
-
+    
+    var countdownButton: UIButton!
     /**
      * Responds to the countdown button being clicked
      *
@@ -43,11 +44,9 @@ class ViewController: UIViewController {
      * 4) DO NOT EDIT THE METHOD SIGNATURE
      */
     @IBAction func countdownBtnClicked(sender: UIButton) {
-        
-        // Disable the button
-        // performCountdown()
-        // Enable the button
-
+        countdownButton = sender
+        countdownButton.isEnabled = false
+        performCountdown {}
     }
     
     /*
@@ -61,10 +60,18 @@ class ViewController: UIViewController {
      * 5) DO NOT EDIT THE METHOD SIGNATURE
      */
     func performCountdown(completion: () -> Void) {
-        
-            // For 0 to 100 {
-            // Pause the thread with this: NSThread.sleepForTimeInterval(0.5)
-            //}
+        DispatchQueue.global(qos: .background).async {
+            for i in 0...100 {
+                let nextLabelText = "\(100 - i)"
+                DispatchQueue.main.async { [unowned self] in
+                    self.countdown.text = nextLabelText
+                }
+                Thread.sleep(forTimeInterval: 0.5)
+            }
+            DispatchQueue.main.async { [unowned self] in
+                self.countdownButton.isEnabled = true
+            }
+        }
     }
     
     
